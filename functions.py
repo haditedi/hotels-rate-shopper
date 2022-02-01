@@ -16,6 +16,8 @@ def get_input():
     return enter_date, day_length
 
 def get_hotel_m_rate(arrival, num_days, driver):
+    print("Hotel M")
+    print("Date       Rate")
     for i in range(1,num_days+1):
         time.sleep(5)
         departure = arrival + timedelta(days=i)
@@ -26,7 +28,8 @@ def get_hotel_m_rate(arrival, num_days, driver):
             elem=driver.find_element(By.XPATH, '//*[@id="auto-child-card-CLA0"]/div/div/div[2]/div[1]/div/div[1]/span')
             if elem.text == "Per Night":
                 elem=driver.find_element(By.XPATH, '//*[@id="auto-child-card-CLA0"]/div/div/div[2]/div[1]/div/ins/span[2]')
-            print(elem.text)
+            print(arrival, elem.text)
+            
         except:
             print("not available")
     
