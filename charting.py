@@ -2,18 +2,22 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import numpy as np
 
-def plot_chart(x_axis,y_axis):
+def plot_chart(*axis):
 
     plt.style.use('seaborn')
 
-    x_axis = np.array(x_axis)
+    h_x_axis = np.array(axis[0])
 
     #USING NUMPY TO MASK SO THAT CHART WILL PLOT THROUGH MISSING DATA
-    y_axis = np.array(y_axis).astype(np.double)
-    y_mask = np.isfinite(y_axis)
+    h_y_axis = np.array(axis[1]).astype(np.double)
+    h_y_mask = np.isfinite(h_y_axis)
+
+    m_y_axis = np.array(axis[2]).astype(np.double)
+    m_y_mask = np.isfinite(m_y_axis)
 
     plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%d/%m/%y'))
-    plt.plot_date(x_axis[y_mask], y_axis[y_mask], linestyle='solid', label="HOTEL M" )
+    plt.plot_date(h_x_axis[h_y_mask], h_y_axis[h_y_mask], linestyle='solid', label="HOTEL H" )
+    plt.plot_date(h_x_axis[m_y_mask], m_y_axis[m_y_mask], linestyle='solid', label="HOTEL M" )
     
     plt.xlabel("DATE")
     plt.ylabel("RATE (£)")
