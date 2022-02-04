@@ -12,16 +12,14 @@ hotel_h_url = os.environ.get("HOTEL_H_URL")
 
 #CONTENT
 def get_input():
-    enter_date = date.fromisoformat(input("Enter date (YYYY-MM-DD) :"))
-    day_length = int(input("how many days? :"))
+    enter_date = date.fromisoformat(input("Enter date (YYYY-MM-DD) : "))
+    day_length = int(input("how many days? : "))
     return enter_date, day_length
 
 def get_hotel_m_rate(arrival, num_days, driver):
-    print("Hotel M")
-    print("Date       Rate")
-
     x_axis = []
     y_axis = []
+
     for i in range(1,num_days+1):
         time.sleep(3)
         departure = arrival + timedelta(days=1)     
@@ -33,10 +31,10 @@ def get_hotel_m_rate(arrival, num_days, driver):
             if elem.text == "Per Night":
                 elem=driver.find_element(By.XPATH, '//*[@id="auto-child-card-CLA0"]/div/div/div[2]/div[1]/div/ins/span[2]')
             room_rate = int(elem.text[1:])
-            print(arrival, elem.text)
+            print("Hotel M ",arrival, elem.text)
             y_axis.append(room_rate)   
         except:
-            print(arrival, "not available")
+            print("Hotel M ",arrival, "not available")
             y_axis.append(None)
         finally:
             x_axis.append(arrival)
@@ -45,13 +43,10 @@ def get_hotel_m_rate(arrival, num_days, driver):
         
 
 def get_hotel_h_rate(arrival, num_days, driver):
-    print("Hotel H")
-    print("Date       Rate")
-
     x_axis = []
     y_axis = []
+
     for i in range(1,num_days+1):
-        
         departure = arrival + timedelta(days=1)     
         url = f"{hotel_h_url}&checkInDate={arrival}&checkOutDate={departure}"  
         driver.get(url)
@@ -63,10 +58,10 @@ def get_hotel_h_rate(arrival, num_days, driver):
             elem=driver.find_element(By.XPATH, '//*[@id="room-rate-288293"]/div/div/div[2]/div/div/div/div/div[1]/div[2]/span[2]')
             room_rate = (elem.text.split())
             room_rate = float(room_rate[1])           
-            print(arrival, elem.text)
+            print("Hotel H ", arrival, room_rate)
             y_axis.append(room_rate)   
         except:
-            print(arrival, "not available")
+            print("Hotel H ",arrival, "not available")
             y_axis.append(None)
         finally:
             x_axis.append(arrival)
