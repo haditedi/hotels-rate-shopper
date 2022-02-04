@@ -8,6 +8,7 @@ def plot_chart(x_axis,y_axis):
 
     x_axis = np.array(x_axis)
 
+    #USING NUMPY TO MASK SO THAT CHART WILL PLOT THROUGH MISSING DATA
     y_axis = np.array(y_axis).astype(np.double)
     y_mask = np.isfinite(y_axis)
 
