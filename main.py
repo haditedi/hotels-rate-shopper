@@ -1,17 +1,21 @@
 from selenium import webdriver
 
-from functions import get_input, get_hotel_m_rate, get_hotel_h_rate
+from functions import get_input, get_hotel_m_rate, get_hotel_h_rate, get_hotel_s_rate
 from charting import plot_chart
 
 import concurrent.futures
 
 
+#CONTENT
+arrival_date, num_days = get_input()
+
+#FETCH RATE FROM HOTEL S THROUGH API
+s_x_axis, s_y_axis = get_hotel_s_rate(arrival_date, num_days)
+print("HOTEL S ",s_x_axis, s_y_axis,"\n")
+
 #SETUP CHROME DRIVER
 options = webdriver.ChromeOptions()
 options.add_experimental_option('excludeSwitches', ['enable-logging'])
-
-#CONTENT
-arrival_date, num_days = get_input()
 driver1 = webdriver.Chrome(options=options)
 driver2 = webdriver.Chrome(options=options)
 
@@ -25,7 +29,7 @@ with concurrent.futures.ThreadPoolExecutor() as executor:
 driver1.close()
 driver2.close()
 
-plot_chart(h_x_axis, h_y_axis, m_y_axis)
+plot_chart(h_x_axis, h_y_axis, m_y_axis, s_y_axis)
 
 
 

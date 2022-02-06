@@ -1,5 +1,6 @@
 from datetime import date, timedelta
 import time
+import requests
 
 from selenium.webdriver.common.by import By
 
@@ -9,11 +10,12 @@ import os
 load_dotenv()
 hotel_m_url = os.environ.get("HOTEL_M_URL")
 hotel_h_url = os.environ.get("HOTEL_H_URL")
+hotel_s_url = os.environ.get("HOTEL_S_URL")
 
 #CONTENT
 def get_input():
     enter_date = date.fromisoformat(input("Enter date (YYYY-MM-DD) : "))
-    day_length = int(input("how many days? : "))
+    day_length = int(input("how many days? (max 28 days) : "))
     return enter_date, day_length
 
 def get_hotel_m_rate(arrival, num_days, driver):
@@ -68,3 +70,18 @@ def get_hotel_h_rate(arrival, num_days, driver):
             arrival+=timedelta(days=1)
     return x_axis, y_axis
 
+def get_hotel_s_rate(arrival, num_days):
+    x_axis = []
+    y_axis = []
+    r = requests.get(f'{hotel_s_url}?start_date={arrival}&end_date={arrival+timedelta(days=num_days-1)}')
+    data = r.json()
+   
+    try:
+        one_bed = data[0]['rate_plans'][0]['rate_plan_dates']
+        for i in one_bed:
+            x_axis.append(i['date'])
+            y_axis.append(int(i['rate']))
+    except:
+        print("error occured,,,")
+    
+    return x_axis, y_axis
