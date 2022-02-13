@@ -2,10 +2,19 @@ import tkinter as tk
 from tkinter import ttk
 from tkcalendar import Calendar
 
+from datetime import date
+
+from selenium import webdriver
+
+from functions import get_hotel_m_rate, get_hotel_h_rate, get_hotel_s_rate
+from charting import plot_chart
+
+import concurrent.futures
+
 root = tk.Tk()
 
 root.title("HOTEL RATE SHOPPER")
-root.geometry('600x400+50+50')
+root.geometry('600x300+50+50')
 
 s= ttk.Style()
 s.theme_use('clam')
@@ -13,30 +22,27 @@ s.theme_use('clam')
 root.columnconfigure(0,weight=1)
 root.columnconfigure(1,weight=1)
 root.columnconfigure(2,weight=1)
-# root.rowconfigure(0,weight=1)
-# root.rowconfigure(1,weight=1)
-# root.rowconfigure(2,weight=1)
 
-start_date = ""
-end_date = ""
+start_date = tk.StringVar()
+end_date = tk.StringVar()
 
 def calender_func(arg):
     print(arg)
     def print_sel(): 
         selected_date = arg 
         if selected_date == "start":
-            start_date = cal.selection_get()
-            print(type(start_date), start_date)
-            label_date = ttk.Label(root, text = start_date)
-            label_date.grid(column=0, row=2,padx=5, pady=5)
+            start_date.set(cal.selection_get())
+            print(type(start_date), start_date.get())
+            start_box = ttk.Entry(root, textvariable = start_date)
+            start_box.grid(column=0, row=2,sticky="E", padx=5, pady=5)    
         else:
-            end_date = cal.selection_get()
-            print(type(end_date), end_date)
-            label_date = ttk.Label(root, text = end_date)
-            label_date.grid(column=2, row=2,padx=5, pady=5)
-        top.destroy()
+            end_date.set(cal.selection_get())
+            print(type(end_date), end_date.get())
+            end_box = ttk.Entry(root, textvariable = end_date)
+            end_box.grid(column=2, row=2,sticky="W",padx=5, pady=5)
         
-
+        top.destroy()
+            
     top = tk.Toplevel(root)
 
     cal = Calendar(top,
@@ -45,13 +51,42 @@ def calender_func(arg):
     cal.pack(fill="both", expand=True)
     ttk.Button(top, text="ok", command=print_sel).pack()
 
+def handleSubmit():
+    arr_date = date.fromisoformat(start_date.get())
+    dep_date = date.fromisoformat(end_date.get())
+    num_days = (dep_date - arr_date).days
+    s_x_axis, s_y_axis = get_hotel_s_rate(arr_date, num_days)
+   
+    #SETUP CHROME DRIVER
+    options = webdriver.ChromeOptions()
+    options.add_experimental_option('excludeSwitches', ['enable-logging'])
+    driver1 = webdriver.Chrome(options=options)
+    driver2 = webdriver.Chrome(options=options)
+
+    #FETHCING RATES IN PARALLEL BY LAUNCHING TWO BROWSER
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        future_m = executor.submit(get_hotel_m_rate, arr_date, num_days, driver1)
+        future_h = executor.submit(get_hotel_h_rate, arr_date, num_days, driver2)
+        (m_x_axis, m_y_axis) = future_m.result()
+        (h_x_axis, h_y_axis) = future_h.result()
+
+    driver1.close()
+    driver2.close()
+
+    plot_chart(h_x_axis, h_y_axis, m_y_axis, s_y_axis)
+
+
+
 title = ttk.Label(root, text="HOTEL RATE SHOPPER")
 title.grid(column=1, row=0, columnspan=1,padx=5, pady=50)
+
 start_button = ttk.Button(root, text='Start Date', command=lambda: calender_func("start"))
-start_button.grid(column=0, row=1, padx=5, pady=5)
+start_button.grid(column=0, row=1, sticky="E", padx=5, pady=5)
+
 end_button = ttk.Button(root, text='End Date', command=lambda: calender_func("end"))
-end_button.grid(column=2, row=1, padx=5, pady=5)
-submit_button = ttk.Button(root, text='Submit', command=lambda: print("submit"))
-submit_button.grid(column=1, row=2, padx=5, pady=5)
+end_button.grid(column=2, row=1, sticky="W", padx=5, pady=5)
+
+submit_button = ttk.Button(root, text='Submit', command=handleSubmit)
+submit_button.grid(column=1, row=3, padx=5, pady=5)
 
 root.mainloop()

@@ -71,6 +71,8 @@ def get_hotel_h_rate(arrival, num_days, driver):
     return x_axis, y_axis
 
 def get_hotel_s_rate(arrival, num_days):
+    print("ARR", type(arrival))
+    print("NUM-FUNC", type(num_days))
     x_axis = []
     y_axis = []
     r = requests.get(f'{hotel_s_url}?start_date={arrival}&end_date={arrival+timedelta(days=num_days-1)}')
