@@ -13,17 +13,14 @@ import concurrent.futures
 
 
 def calender_func(arg):
-    print(arg)
     def print_sel(): 
         selected_date = arg 
         if selected_date == "start":
             start_date.set(cal.selection_get())
-            print(type(start_date), start_date.get())
             start_box = ttk.Entry(root, textvariable = start_date)
             start_box.grid(column=0, row=2,sticky="E", padx=5, pady=5)    
         else:
             end_date.set(cal.selection_get())
-            print(type(end_date), end_date.get())
             end_box = ttk.Entry(root, textvariable = end_date)
             end_box.grid(column=2, row=2,sticky="W",padx=5, pady=5)
         
