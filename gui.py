@@ -54,9 +54,10 @@ def handleSubmit():
             (h_x_axis, h_y_axis) = future_h.result()
             plot_chart(h_x_axis, h_y_axis, m_y_axis, s_y_axis)
         except:
+            showerror("Error", "Opps something went wrong")
+        finally:
             driver1.close()
             driver2.close()
-            showerror("Error", "Opps something went wrong")
         
         
 #SETUP AND LAYOUT
