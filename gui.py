@@ -1,15 +1,14 @@
 import tkinter as tk
 from tkinter import ttk
+from tkinter.messagebox import showerror
 from tkcalendar import Calendar
 
 from datetime import date
-
+import concurrent.futures
 from selenium import webdriver
 
 from functions import get_hotel_m_rate, get_hotel_h_rate, get_hotel_s_rate
 from charting import plot_chart
-
-import concurrent.futures
 
 
 def calender_func(arg):
@@ -17,11 +16,11 @@ def calender_func(arg):
         selected_date = arg 
         if selected_date == "start":
             start_date.set(cal.selection_get())
-            start_box = ttk.Entry(root, textvariable = start_date)
+            start_box = ttk.Entry(root, width=11,textvariable = start_date)
             start_box.grid(column=0, row=2,sticky="E", padx=5, pady=5)    
         else:
             end_date.set(cal.selection_get())
-            end_box = ttk.Entry(root, textvariable = end_date)
+            end_box = ttk.Entry(root, width=11, textvariable = end_date)
             end_box.grid(column=2, row=2,sticky="W",padx=5, pady=5)
         
         top.destroy()
@@ -50,15 +49,16 @@ def handleSubmit():
     with concurrent.futures.ThreadPoolExecutor() as executor:
         future_m = executor.submit(get_hotel_m_rate, arr_date, num_days, driver1)
         future_h = executor.submit(get_hotel_h_rate, arr_date, num_days, driver2)
-        (m_x_axis, m_y_axis) = future_m.result()
-        (h_x_axis, h_y_axis) = future_h.result()
-
-    driver1.close()
-    driver2.close()
-
-    plot_chart(h_x_axis, h_y_axis, m_y_axis, s_y_axis)
-
-
+        try:
+            (m_x_axis, m_y_axis) = future_m.result()
+            (h_x_axis, h_y_axis) = future_h.result()
+            plot_chart(h_x_axis, h_y_axis, m_y_axis, s_y_axis)
+        except:
+            driver1.close()
+            driver2.close()
+            showerror("Error", "Opps something went wrong")
+        
+        
 #SETUP AND LAYOUT
 root = tk.Tk()
 

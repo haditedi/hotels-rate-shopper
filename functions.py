@@ -50,12 +50,14 @@ def get_hotel_h_rate(arrival, num_days, driver):
 
     for i in range(1,num_days+1):
         departure = arrival + timedelta(days=1)     
-        url = f"{hotel_h_url}&checkInDate={arrival}&checkOutDate={departure}"  
+        # url = f"{hotel_h_url}&checkInDate={arrival}&checkOutDate={departure}"  
         driver.get(url)
         
-        try: 
+        try:
+            #agree to cookies 
             if i==1:
                 driver.find_element(By.XPATH, '//*[@id="app"]/div/div[1]/div/div[2]/button[3]/div/span').click()
+            
             time.sleep(3)
             elem=driver.find_element(By.XPATH, '//*[@id="room-rate-288293"]/div/div/div[2]/div/div/div/div/div[1]/div[2]/span[2]')
             room_rate = (elem.text.split())
