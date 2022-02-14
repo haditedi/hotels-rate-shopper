@@ -50,7 +50,7 @@ def get_hotel_h_rate(arrival, num_days, driver):
 
     for i in range(1,num_days+1):
         departure = arrival + timedelta(days=1)     
-        # url = f"{hotel_h_url}&checkInDate={arrival}&checkOutDate={departure}"  
+        url = f"{hotel_h_url}&checkInDate={arrival}&checkOutDate={departure}"  
         driver.get(url)
         
         try:
