@@ -89,6 +89,8 @@ end_button.grid(column=2, row=1, sticky="W", padx=5, pady=5)
 
 submit_button = ttk.Button(root, text='Submit', command=handleSubmit)
 submit_button.grid(column=1, row=3, padx=5, pady=5)
+notice_label = ttk.Label(root, text="Max 28 days",background='#4a7a8c')
+notice_label.grid(column=1, row=4)
 
 
 root.mainloop()
