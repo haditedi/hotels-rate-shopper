@@ -23,12 +23,13 @@ def get_hotel_m_rate(arrival, num_days, driver):
     y_axis = []
 
     for i in range(1,num_days+1):
-        time.sleep(3)
+        
         departure = arrival + timedelta(days=1)     
         url = f"{hotel_m_url}&adult=2&arrive={arrival}&chain=22402&child=0&config=SLH_HOTEL&configcode=SLH_HOTEL&currency=GBP&depart={departure}&hotel=35006&level=hotel&locale=en-US&rooms=1&src=24C"  
         driver.get(url)
         
         try: 
+            time.sleep(3)
             elem=driver.find_element(By.XPATH, '//*[@id="auto-child-card-CLA0"]/div/div/div[2]/div[1]/div/div[1]/span')
             if elem.text == "Per Night":
                 elem=driver.find_element(By.XPATH, '//*[@id="auto-child-card-CLA0"]/div/div/div[2]/div[1]/div/ins/span[2]')
